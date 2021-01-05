@@ -1,1 +1,1 @@
-# lifeguard-tinydb
+# Lifeguard TinyDB
