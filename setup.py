@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="lifeguard-tinydb",
-    version="0.0.1",
+    version="0.0.2",
     url="https://github.com/LifeguardSystem/lifeguard-tinydb",
     author="Diego Rubin",
     author_email="contact@diegorubin.dev",

@@ -43,14 +43,24 @@ class TinyDBValidationRepository:
     def fetch_last_validation_result(self, validation_name):
         result = self.table.get(self.__get_key(validation_name))
         if result:
-            return ValidationResponse(
-                validation_name,
-                result["status"],
-                result["details"],
-                result["settings"],
-                last_execution=result["last_execution"],
-            )
+            return self.__convert_to_validation(result)
         return None
+
+    def fetch_all_validation_results(self):
+        results = []
+        for result in self.table.all():
+            results.append(self.__convert_to_validation(result))
+
+        return results
+
+    def __convert_to_validation(self, entry):
+        return ValidationResponse(
+            entry["validation_name"],
+            entry["status"],
+            entry["details"],
+            entry["settings"],
+            last_execution=entry["last_execution"],
+        )
 
     def __get_key(self, validation_name):
         query = Query()

@@ -31,6 +31,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
     def test_fetch_last_validation_result_not_none(self):
         validation_name = "validation"
         self.table.get.return_value = {
+            "validation_name": "validation",
             "status": "status",
             "details": "details",
             "settings": "settings",
@@ -44,6 +45,26 @@ class TestTinyDBValidationRepository(unittest.TestCase):
         self.assertEqual(result.settings, "settings")
         self.assertEqual(result.last_execution, datetime(2020, 11, 19))
         self.table.get.assert_called_with(Query().validation_name == "validation")
+
+    def test_fetch_all_validation_results_not_none(self):
+        self.table.all.return_value = [
+            {
+                "validation_name": "validation",
+                "status": "status",
+                "details": "details",
+                "settings": "settings",
+                "last_execution": datetime(2020, 11, 19),
+            }
+        ]
+
+        result = self.repository.fetch_all_validation_results()
+
+        self.assertEqual(result[0].validation_name, "validation")
+        self.assertEqual(result[0].status, "status")
+        self.assertEqual(result[0].details, "details")
+        self.assertEqual(result[0].settings, "settings")
+        self.assertEqual(result[0].last_execution, datetime(2020, 11, 19))
+        self.table.all.assert_called()
 
     def test_save_validation_result_create(self):
         self.table.count.return_value = 0
