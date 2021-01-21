@@ -1,15 +1,13 @@
-from datetime import datetime
 import unittest
-from unittest.mock import patch, MagicMock
-
-from tinydb import Query
+from datetime import datetime
+from unittest.mock import MagicMock, patch
 
 from lifeguard.notifications import NotificationStatus
 from lifeguard.validations import ValidationResponse
-from lifeguard_tinydb.repositories import (
-    TinyDBValidationRepository,
-    TinyDBNotificationRepository,
-)
+from tinydb import Query
+
+from lifeguard_tinydb.repositories import (TinyDBNotificationRepository,
+                                           TinyDBValidationRepository)
 
 
 class TestTinyDBValidationRepository(unittest.TestCase):
@@ -35,7 +33,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
             "status": "status",
             "details": "details",
             "settings": "settings",
-            "last_execution": datetime(2020, 11, 19),
+            "last_execution": "2020-11-19 00:00",
         }
 
         result = self.repository.fetch_last_validation_result(validation_name)
@@ -53,7 +51,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
                 "status": "status",
                 "details": "details",
                 "settings": "settings",
-                "last_execution": datetime(2020, 11, 19),
+                "last_execution": "2020-11-19 00:00",
             }
         ]
 
@@ -84,7 +82,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
 
     def test_save_validation_result_update(self):
         self.table.count.return_value = 1
-        response = ValidationResponse("name", "status", {})
+        response = ValidationResponse("name", "status", {}, last_execution=datetime(2021, 1, 21))
 
         self.repository.save_validation_result(response)
 
@@ -94,7 +92,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
                 "status": "status",
                 "details": {},
                 "settings": None,
-                "last_execution": None,
+                "last_execution": '2021-01-21 00:00',
             },
             Query().validation_name == "name",
         )
@@ -124,7 +122,7 @@ class TestTinyDBNotificationRepository(unittest.TestCase):
             "thread_ids": {},
             "is_opened": True,
             "options": {},
-            "last_notification": datetime(2020, 11, 19),
+            "last_notification": "2020-11-19 00:00",
         }
 
         result = self.repository.fetch_last_notification_for_a_validation(
@@ -152,7 +150,7 @@ class TestTinyDBNotificationRepository(unittest.TestCase):
                 "thread_ids": "status",
                 "is_opened": True,
                 "options": {},
-                "last_notification": datetime(2020, 12, 31, 0, 0),
+                "last_notification": "2020-12-31 00:00",
             }
         )
 
@@ -171,7 +169,7 @@ class TestTinyDBNotificationRepository(unittest.TestCase):
                 "thread_ids": {},
                 "is_opened": True,
                 "options": {},
-                "last_notification": datetime(2020, 12, 31, 0, 0),
+                "last_notification": "2020-12-31 00:00",
             },
             Query().validation_name == "name",
         )
