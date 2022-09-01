@@ -6,8 +6,10 @@ from lifeguard.notifications import NotificationStatus
 from lifeguard.validations import ValidationResponse
 from tinydb import Query
 
-from lifeguard_tinydb.repositories import (TinyDBNotificationRepository,
-                                           TinyDBValidationRepository)
+from lifeguard_tinydb.repositories import (
+    TinyDBNotificationRepository,
+    TinyDBValidationRepository,
+)
 
 
 class TestTinyDBValidationRepository(unittest.TestCase):
@@ -82,7 +84,9 @@ class TestTinyDBValidationRepository(unittest.TestCase):
 
     def test_save_validation_result_update(self):
         self.table.count.return_value = 1
-        response = ValidationResponse("name", "status", {}, last_execution=datetime(2021, 1, 21))
+        response = ValidationResponse(
+            "name", "status", {}, last_execution=datetime(2021, 1, 21)
+        )
 
         self.repository.save_validation_result(response)
 
@@ -92,7 +96,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
                 "status": "status",
                 "details": {},
                 "settings": None,
-                "last_execution": '2021-01-21 00:00',
+                "last_execution": "2021-01-21 00:00",
             },
             Query().validation_name == "name",
         )
@@ -114,7 +118,9 @@ class TestTinyDBNotificationRepository(unittest.TestCase):
         )
 
         self.assertIsNone(result)
-        self.table.get.assert_called_with(Query().validation_name == validation_name)
+        self.table.get.assert_called_with(
+            (Query().validation_name == validation_name) & (Query().is_opened == True)
+        )
 
     def test_fetch_last_notification_for_a_validation_not_none(self):
         validation_name = "validation"
@@ -133,7 +139,9 @@ class TestTinyDBNotificationRepository(unittest.TestCase):
         self.assertEqual(result.is_opened, True)
         self.assertEqual(result.options, {})
         self.assertEqual(result.last_notification, datetime(2020, 11, 19))
-        self.table.get.assert_called_with(Query().validation_name == "validation")
+        self.table.get.assert_called_with(
+            (Query().validation_name == validation_name) & (Query().is_opened == True)
+        )
 
     @patch("lifeguard.notifications.datetime")
     def test_save_last_notification_for_a_validation_create(self, mock_datetime):
@@ -171,5 +179,5 @@ class TestTinyDBNotificationRepository(unittest.TestCase):
                 "options": {},
                 "last_notification": "2020-12-31 00:00",
             },
-            Query().validation_name == "name",
+            (Query().validation_name == "name") & (Query().is_opened == True),
         )

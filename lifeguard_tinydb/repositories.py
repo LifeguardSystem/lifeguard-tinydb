@@ -127,4 +127,4 @@ class TinyDBNotificationRepository:
 
     def __get_key(self, validation_name):
         query = Query()
-        return query.validation_name == validation_name
+        return (query.validation_name == validation_name) & (query.is_opened == True)
