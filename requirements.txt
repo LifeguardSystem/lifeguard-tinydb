@@ -1,2 +1,2 @@
-lifeguard==0.0.14
+lifeguard==1.1.0
 tinydb==4.3.0

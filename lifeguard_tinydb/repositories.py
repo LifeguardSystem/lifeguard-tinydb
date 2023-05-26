@@ -71,11 +71,11 @@ class TinyDBValidationRepository:
             last_execution = datetime.strptime(last_execution, DATE_FORMAT)
 
         return ValidationResponse(
-            entry["validation_name"],
             entry["status"],
             entry["details"],
             entry["settings"],
             last_execution=last_execution,
+            validation_name=entry["validation_name"],
         )
 
     def __get_key(self, validation_name):
@@ -88,7 +88,6 @@ class TinyDBNotificationRepository:
         self.table = DATABASE.table("notifications")
 
     def save_last_notification_for_a_validation(self, notification):
-
         data = {
             "validation_name": notification.validation_name,
             "thread_ids": notification.thread_ids,

@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, patch
 
+from lifeguard import NORMAL
 from lifeguard.notifications import NotificationStatus
 from lifeguard.validations import ValidationResponse
 from tinydb import Query
@@ -32,7 +33,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
         validation_name = "validation"
         self.table.get.return_value = {
             "validation_name": "validation",
-            "status": "status",
+            "status": NORMAL,
             "details": "details",
             "settings": "settings",
             "last_execution": "2020-11-19 00:00",
@@ -40,7 +41,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
 
         result = self.repository.fetch_last_validation_result(validation_name)
 
-        self.assertEqual(result.status, "status")
+        self.assertEqual(result.status, NORMAL)
         self.assertEqual(result.details, "details")
         self.assertEqual(result.settings, "settings")
         self.assertEqual(result.last_execution, datetime(2020, 11, 19))
@@ -50,7 +51,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
         self.table.all.return_value = [
             {
                 "validation_name": "validation",
-                "status": "status",
+                "status": NORMAL,
                 "details": "details",
                 "settings": "settings",
                 "last_execution": "2020-11-19 00:00",
@@ -60,7 +61,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
         result = self.repository.fetch_all_validation_results()
 
         self.assertEqual(result[0].validation_name, "validation")
-        self.assertEqual(result[0].status, "status")
+        self.assertEqual(result[0].status, NORMAL)
         self.assertEqual(result[0].details, "details")
         self.assertEqual(result[0].settings, "settings")
         self.assertEqual(result[0].last_execution, datetime(2020, 11, 19))
@@ -68,14 +69,14 @@ class TestTinyDBValidationRepository(unittest.TestCase):
 
     def test_save_validation_result_create(self):
         self.table.count.return_value = 0
-        response = ValidationResponse("name", "status", {})
+        response = ValidationResponse(NORMAL, {}, validation_name="name")
 
         self.repository.save_validation_result(response)
 
         self.table.insert.assert_called_with(
             {
                 "validation_name": "name",
-                "status": "status",
+                "status": NORMAL,
                 "details": {},
                 "settings": None,
                 "last_execution": None,
@@ -85,7 +86,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
     def test_save_validation_result_update(self):
         self.table.count.return_value = 1
         response = ValidationResponse(
-            "name", "status", {}, last_execution=datetime(2021, 1, 21)
+            NORMAL, {}, last_execution=datetime(2021, 1, 21), validation_name="name"
         )
 
         self.repository.save_validation_result(response)
@@ -93,7 +94,7 @@ class TestTinyDBValidationRepository(unittest.TestCase):
         self.table.update.assert_called_with(
             {
                 "validation_name": "name",
-                "status": "status",
+                "status": NORMAL,
                 "details": {},
                 "settings": None,
                 "last_execution": "2021-01-21 00:00",
