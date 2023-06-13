@@ -67,6 +67,13 @@ class TestTinyDBValidationRepository(unittest.TestCase):
         self.assertEqual(result[0].last_execution, datetime(2020, 11, 19))
         self.table.all.assert_called()
 
+    def test_delete_validation_result(self):
+        self.repository.delete_validation_result("validation_name")
+
+        self.table.remove.assert_called_with(
+            Query().validation_name == "validation_name"
+        )
+
     def test_save_validation_result_create(self):
         self.table.count.return_value = 0
         response = ValidationResponse(NORMAL, {}, validation_name="name")

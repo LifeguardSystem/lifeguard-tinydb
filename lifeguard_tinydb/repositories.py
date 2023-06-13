@@ -64,6 +64,9 @@ class TinyDBValidationRepository:
 
         return results
 
+    def delete_validation_result(self, validation_name):
+        self.table.remove(self.__get_key(validation_name))
+
     def __convert_to_validation(self, entry):
         last_execution = entry["last_execution"]
 
